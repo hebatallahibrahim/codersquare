@@ -5,17 +5,15 @@ import { CreatePostRequest, CreatePostResponse, ListPostsRequest, ListPostsRespo
 
 
 
-export const listPostHandler:Expresshandler<ListPostsRequest,ListPostsResponse> = (request,response)=>{
+export const listPostHandler:Expresshandler<ListPostsRequest,ListPostsResponse> = async (request,response)=>{
   
-    response.send({posts :db.ListPosts()});
+    response.send({posts : await db.ListPosts()});
  }
 
 
 
- export const createPostHandler:Expresshandler<CreatePostRequest,CreatePostResponse> =(request,response)=>{
-    if(!request.body.title){
-        return response.status(400).send('title is required,but missing')
-    } 
+ export const createPostHandler:Expresshandler<CreatePostRequest,CreatePostResponse> =async (request,response)=>{
+
 
     if(!request.body.title || !request.body.url || !request.body.userId){
         return response.sendStatus(400);
@@ -28,6 +26,6 @@ export const listPostHandler:Expresshandler<ListPostsRequest,ListPostsResponse> 
         userId:request.body.userId
 
     };
-   db.createPost(post);
+   await db.createPost(post);
     response.sendStatus(200);
  }
