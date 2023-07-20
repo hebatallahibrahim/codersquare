@@ -1,5 +1,6 @@
-import express, { RequestHandler } from "express";
+import express, { ErrorRequestHandler, RequestHandler } from "express";
 import { db } from "./server/datastore";
+import { createPostHandler, listPostHandler } from "./server/handlers/postHandler";
 
 const App = express();
 
@@ -15,16 +16,16 @@ App.use(middlewareHandeler);
 
     
 
- App.get('/posts',(request,response)=>{
-    response.send({posts :db.ListPosts()});
- })
+ App.get('/v1/posts',listPostHandler)
 
 
- App.post('/posts',(request,response)=>{
-    const post = request.body;
-   db.createPost(post);
-    response.sendStatus(200);
- })
+ App.post('/v1/posts',createPostHandler)
 
+ const errorHandler: ErrorRequestHandler = (err,req,res,next)=>{
+    console.log('uncaught exception:',err);
+    res.status(500).send('Oops ,an unexpected error occured ,please try again');
 
+    
+ }
+ App.use(errorHandler);
 App.listen(3000);
